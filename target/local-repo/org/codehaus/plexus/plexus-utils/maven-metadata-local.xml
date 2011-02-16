@@ -1,0 +1,10 @@
+<metadata>
+  <groupId>org.codehaus.plexus</groupId>
+  <artifactId>plexus-utils</artifactId>
+  <versioning>
+    <versions>
+      <version>1.4.1</version>
+    </versions>
+    <lastUpdated>20110215213219</lastUpdated>
+  </versioning>
+</metadata>

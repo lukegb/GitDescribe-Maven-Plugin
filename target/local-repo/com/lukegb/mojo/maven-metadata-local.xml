@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <plugins>
+    <plugin>
+      <name>Git Describe Maven Plugin</name>
+      <prefix>gitdescribe</prefix>
+      <artifactId>gitdescribe-maven-plugin</artifactId>
+    </plugin>
+  </plugins>
+</metadata>
