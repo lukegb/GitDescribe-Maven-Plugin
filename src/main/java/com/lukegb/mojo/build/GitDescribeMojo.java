@@ -78,6 +78,13 @@ public class GitDescribeMojo
      */
     private String outputPrefix;
 
+    /**
+     * String indicating full output if getting version fails
+     *
+     * @parameter default-value="unknown"
+     */
+    private String failOutput;
+
     private void checkResult( ScmResult result )
         throws MojoExecutionException
     {
@@ -122,6 +129,9 @@ public class GitDescribeMojo
         if (line == null) {
             String commandtwo[] = {"git","log","--pretty=format:\"%h\""};
             line = commandExecutor(commandtwo);
+            if (line == null) {
+                line = failOutput;
+            }
         }
         return outputPrefix + line + outputPostfix;
     }
