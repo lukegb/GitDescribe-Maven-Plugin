@@ -58,8 +58,16 @@ public class GitDescribeMojo
      * String to append to git describe/shorttag output
      *
      * @parameter default-value=""
+     * @deprecated superseded by outputSuffix.
      */
     private String outputPostfix;
+
+    /**
+     * String to append to git describe/shorttag output.
+     *
+     * @parameter default-value=""
+     */
+    private String outputSuffix;
 
     /**
      * String to prepend to git describe/shorttag output
@@ -104,8 +112,8 @@ public class GitDescribeMojo
     protected String getDescriber()
         throws ScmException, MojoExecutionException
     {
-        if (outputPrefix == null) outputPrefix = "";
-        if (outputPostfix == null) outputPostfix = "";
+        outputPrefix = firstNonNull(outputPrefix, "");
+        outputSuffix = firstNonNull(outputSuffix, outputPostfix, "");
         // scmDirectory
         String command[] = {"git","describe"};
         String line = commandExecutor(command);
@@ -116,7 +124,7 @@ public class GitDescribeMojo
                 line = failOutput;
             }
         }
-        return outputPrefix + line + outputPostfix;
+        return outputPrefix + line + outputSuffix;
     }
 
 
@@ -156,4 +164,12 @@ public class GitDescribeMojo
         }
     }
 
+    private static String firstNonNull(String... strings) {
+        for (String string : strings) {
+            if (string != null) {
+                return string;
+            }
+        }
+        return null;
+    }
 }
