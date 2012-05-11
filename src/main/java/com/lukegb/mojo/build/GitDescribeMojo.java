@@ -16,27 +16,20 @@ package com.lukegb.mojo.build;
  * limitations under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
-import org.apache.maven.scm.ScmFileStatus;
-import org.apache.maven.scm.ScmResult;
-import org.apache.maven.scm.log.ScmLogDispatcher;
-import org.apache.maven.scm.log.ScmLogger;
-import org.codehaus.plexus.util.StringUtils;
-
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
 
 /**
  * Goal which sets project properties for describer from the
  * current Git repository.
- * 
+ *
  * @author Luke Granger-Brown
  * @goal gitdescribe
  * @requiresProject
@@ -45,12 +38,9 @@ import java.io.InputStream;
 public class GitDescribeMojo
     extends AbstractMojo
 {
-
-    private ScmLogDispatcher logger = new ScmLogDispatcher();
-
     /**
      * The maven project.
-     * 
+     *
      * @parameter expression="${project}"
      * @readonly
      */
@@ -58,7 +48,7 @@ public class GitDescribeMojo
 
     /**
      * Local directory to be used to issue SCM actions
-     * 
+     *
      * @parameter expression="${maven.changeSet.scmDirectory}" default-value="${basedir}
      * @since 1.0
      */
@@ -68,8 +58,16 @@ public class GitDescribeMojo
      * String to append to git describe/shorttag output
      *
      * @parameter default-value=""
+     * @deprecated superseded by outputSuffix.
      */
     private String outputPostfix;
+
+    /**
+     * String to append to git describe/shorttag output.
+     *
+     * @parameter default-value=""
+     */
+    private String outputSuffix;
 
     /**
      * String to prepend to git describe/shorttag output
@@ -85,19 +83,26 @@ public class GitDescribeMojo
      */
     private String failOutput;
 
-    private void checkResult( ScmResult result )
-        throws MojoExecutionException
-    {
-        if ( !result.isSuccess() )
-        {
-            getLog().debug( "Provider message:" );
-            getLog().debug( result.getProviderMessage() == null ? "" : result.getProviderMessage() );
-            getLog().debug( "Command output:" );
-            getLog().debug( result.getCommandOutput() == null ? "" : result.getCommandOutput() );
-            throw new MojoExecutionException( "Command failed."
-                + StringUtils.defaultString( result.getProviderMessage() ) );
-        }
-    }
+    /**
+     * The name of the build property that will contain the output of git describe.
+     *
+     * @parameter default-value="describe"
+     */
+    private String descriptionProperty;
+
+    /**
+     * If true, pass the `--dirty` flag to git-describe.
+     *
+     * @parameter default-value=false
+     */
+    private boolean dirty;
+
+    /**
+     * The &lt;mark&gt; value for the `--dirty` parameter.
+     *
+     * @parameter default-value="dirty"
+     */
+    private String dirtyMark;
 
     public void execute()
         throws MojoExecutionException
@@ -121,11 +126,10 @@ public class GitDescribeMojo
     protected String getDescriber()
         throws ScmException, MojoExecutionException
     {
-        if (outputPrefix == null) outputPrefix = "";
-        if (outputPostfix == null) outputPostfix = "";
+        outputPrefix = firstNonNull(outputPrefix, "");
+        outputSuffix = firstNonNull(outputSuffix, outputPostfix, "");
         // scmDirectory
-        String command[] = {"git","describe"};
-        String line = commandExecutor(command);
+        String line = commandExecutor(buildDescribeCommand());
         if (line == null) {
             String commandtwo[] = {"git","log","--pretty=format:\"%h\""};
             line = commandExecutor(commandtwo);
@@ -133,9 +137,15 @@ public class GitDescribeMojo
                 line = failOutput;
             }
         }
-        return outputPrefix + line + outputPostfix;
+        return outputPrefix + line + outputSuffix;
     }
 
+    private String[] buildDescribeCommand()
+    {
+        return dirty
+           ? new String[] {"git", "describe", "--dirty=" + dirtyMark}
+           : new String[] {"git","describe"};
+    }
 
     private String commandExecutor(String[] command)
     {
@@ -152,7 +162,7 @@ public class GitDescribeMojo
 
     protected String getDescribeProperty()
     {
-        return getProperty( "describer" );
+        return getProperty( descriptionProperty );
     }
 
     protected String getProperty( String property )
@@ -162,7 +172,7 @@ public class GitDescribeMojo
 
     private void setDescribeProperty( String describer )
     {
-        setProperty( "describe", describer );
+        setProperty( descriptionProperty, describer );
     }
 
     private void setProperty( String property, String value )
@@ -173,4 +183,12 @@ public class GitDescribeMojo
         }
     }
 
+    private static String firstNonNull(String... strings) {
+        for (String string : strings) {
+            if (string != null) {
+                return string;
+            }
+        }
+        return null;
+    }
 }
