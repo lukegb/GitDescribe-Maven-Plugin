@@ -90,6 +90,20 @@ public class GitDescribeMojo
      */
     private String descriptionProperty;
 
+    /**
+     * If true, pass the `--dirty` flag to git-describe.
+     *
+     * @parameter default-value=false
+     */
+    private boolean dirty;
+
+    /**
+     * The &lt;mark&gt; value for the `--dirty` parameter.
+     *
+     * @parameter default-value="dirty"
+     */
+    private String dirtyMark;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -115,8 +129,7 @@ public class GitDescribeMojo
         outputPrefix = firstNonNull(outputPrefix, "");
         outputSuffix = firstNonNull(outputSuffix, outputPostfix, "");
         // scmDirectory
-        String command[] = {"git","describe"};
-        String line = commandExecutor(command);
+        String line = commandExecutor(buildDescribeCommand());
         if (line == null) {
             String commandtwo[] = {"git","log","--pretty=format:\"%h\""};
             line = commandExecutor(commandtwo);
@@ -127,6 +140,12 @@ public class GitDescribeMojo
         return outputPrefix + line + outputSuffix;
     }
 
+    private String[] buildDescribeCommand()
+    {
+        return dirty
+           ? new String[] {"git", "describe", "--dirty=" + dirtyMark}
+           : new String[] {"git","describe"};
+    }
 
     private String commandExecutor(String[] command)
     {
