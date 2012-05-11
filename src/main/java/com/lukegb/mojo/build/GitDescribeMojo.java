@@ -75,6 +75,13 @@ public class GitDescribeMojo
      */
     private String failOutput;
 
+    /**
+     * The name of the build property that will contain the output of git describe.
+     *
+     * @parameter default-value="describe"
+     */
+    private String descriptionProperty;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -128,7 +135,7 @@ public class GitDescribeMojo
 
     protected String getDescribeProperty()
     {
-        return getProperty( "describer" );
+        return getProperty( descriptionProperty );
     }
 
     protected String getProperty( String property )
@@ -138,7 +145,7 @@ public class GitDescribeMojo
 
     private void setDescribeProperty( String describer )
     {
-        setProperty( "describe", describer );
+        setProperty( descriptionProperty, describer );
     }
 
     private void setProperty( String property, String value )
