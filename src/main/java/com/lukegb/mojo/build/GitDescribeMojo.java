@@ -16,27 +16,20 @@ package com.lukegb.mojo.build;
  * limitations under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
-import org.apache.maven.scm.ScmFileStatus;
-import org.apache.maven.scm.ScmResult;
-import org.apache.maven.scm.log.ScmLogDispatcher;
-import org.apache.maven.scm.log.ScmLogger;
-import org.codehaus.plexus.util.StringUtils;
-
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
 
 /**
  * Goal which sets project properties for describer from the
  * current Git repository.
- * 
+ *
  * @author Luke Granger-Brown
  * @goal gitdescribe
  * @requiresProject
@@ -45,12 +38,9 @@ import java.io.InputStream;
 public class GitDescribeMojo
     extends AbstractMojo
 {
-
-    private ScmLogDispatcher logger = new ScmLogDispatcher();
-
     /**
      * The maven project.
-     * 
+     *
      * @parameter expression="${project}"
      * @readonly
      */
@@ -58,7 +48,7 @@ public class GitDescribeMojo
 
     /**
      * Local directory to be used to issue SCM actions
-     * 
+     *
      * @parameter expression="${maven.changeSet.scmDirectory}" default-value="${basedir}
      * @since 1.0
      */
@@ -84,20 +74,6 @@ public class GitDescribeMojo
      * @parameter default-value="unknown"
      */
     private String failOutput;
-
-    private void checkResult( ScmResult result )
-        throws MojoExecutionException
-    {
-        if ( !result.isSuccess() )
-        {
-            getLog().debug( "Provider message:" );
-            getLog().debug( result.getProviderMessage() == null ? "" : result.getProviderMessage() );
-            getLog().debug( "Command output:" );
-            getLog().debug( result.getCommandOutput() == null ? "" : result.getCommandOutput() );
-            throw new MojoExecutionException( "Command failed."
-                + StringUtils.defaultString( result.getProviderMessage() ) );
-        }
-    }
 
     public void execute()
         throws MojoExecutionException
