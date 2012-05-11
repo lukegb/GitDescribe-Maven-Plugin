@@ -24,6 +24,28 @@ The plugin might be configured in your pom like so:
         </executions>
       </plugin>
 
-Run `mvn help:describe -Dplugin=gitdescribe -Ddetail` to see which
-configuration options are available.
+## Configuration properties
+
+The following configuration properties are available:
+
+    descriptionProperty (Default: describe)
+      The name of the build property that will contain the output of git
+      describe.
+
+    dirty (Default: false)
+      If true, pass the `--dirty` flag to git-describe.
+
+    dirtyMark (Default: dirty)
+      The <mark> value for the `--dirty` parameter.
+
+    failOutput (Default: unknown)
+      String indicating full output if getting version fails
+
+    outputPrefix (Default: git-)
+      String to prepend to git describe/shorttag output
+
+    outputSuffix
+      String to append to git describe/shorttag output.
+
+
 
