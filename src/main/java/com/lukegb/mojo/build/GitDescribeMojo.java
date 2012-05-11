@@ -1,7 +1,7 @@
 package com.lukegb.mojo.build;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Copyright 2011-2012 Luke Granger-Brown and Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
