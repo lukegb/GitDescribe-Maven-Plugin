@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -60,6 +62,7 @@ public class GitDescribeMojo
      * @parameter default-value=""
      * @deprecated superseded by outputSuffix.
      */
+    @Deprecated
     private String outputPostfix;
 
     /**
@@ -91,6 +94,13 @@ public class GitDescribeMojo
     private String descriptionProperty;
 
     /**
+     * The name of the build property that will contain the git commit count.
+     *
+     * @parameter default-value="git.commit.count"
+     */
+    private String commitCountProperty;
+
+    /**
      * If true, pass the `--dirty` flag to git-describe.
      *
      * @parameter default-value=false
@@ -115,6 +125,7 @@ public class GitDescribeMojo
                 String describe = getDescriber();
                 getLog().info( "Setting Git Describe: " + describe );
                 setDescribeProperty( describe );
+                setCommitCountProperty( getCommitCount( describe ));
             }
         }
         catch ( ScmException e )
@@ -160,6 +171,15 @@ public class GitDescribeMojo
         } catch (Exception e) { return null; }
     }
 
+    private String getCommitCount( String describer )
+    {
+        Pattern pattern = Pattern.compile("-(\\d+)-g[0-9a-f]{7}$");
+        Matcher matcher = pattern.matcher(describer);
+        matcher.find();
+        String count = matcher.group(1);
+        return count;
+    }
+
     protected String getDescribeProperty()
     {
         return getProperty( descriptionProperty );
@@ -173,6 +193,11 @@ public class GitDescribeMojo
     private void setDescribeProperty( String describer )
     {
         setProperty( descriptionProperty, describer );
+    }
+
+    private void setCommitCountProperty( String count )
+    {
+        setProperty( commitCountProperty, count );
     }
 
     private void setProperty( String property, String value )
