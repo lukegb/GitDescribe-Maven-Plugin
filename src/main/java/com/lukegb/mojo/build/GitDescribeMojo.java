@@ -175,7 +175,10 @@ public class GitDescribeMojo
     {
         Pattern pattern = Pattern.compile("-(\\d+)-g[0-9a-f]{7}$");
         Matcher matcher = pattern.matcher(describer);
-        matcher.find();
+        if (!matcher.find()) {
+            // git describe didn't find a version number (perhaps there was no tag).
+            return failOutput;
+        }
         String count = matcher.group(1);
         return count;
     }
