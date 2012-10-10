@@ -114,6 +114,10 @@ public class GitDescribeMojo
      */
     private String dirtyMark;
 
+    /**
+     * Perform the task for which this plugin exists.
+     * i.e. try to shove the Git Describe property into Maven
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -134,6 +138,11 @@ public class GitDescribeMojo
         }
     }
 
+    /**
+     * Fetch the value of the main describer property.
+     *
+     * @return git describe output with prefix and suffix appended
+     */
     protected String getDescriber()
         throws ScmException, MojoExecutionException
     {
@@ -151,13 +160,24 @@ public class GitDescribeMojo
         return outputPrefix + line + outputSuffix;
     }
 
+    /**
+     * Build a String array containing the git command to run.
+     *
+     * @return array of String containing the command (including arguments) to run
+     */
     private String[] buildDescribeCommand()
     {
         return dirty
            ? new String[] {"git", "describe", "--dirty=" + dirtyMark}
-           : new String[] {"git","describe"};
+           : new String[] {"git", "describe"};
     }
 
+    /**
+     * Run a given command, passed as an array of Strings.
+     *
+     * @param command   the command (including parameters) to execute
+     * @return          output of command to stdout
+     */
     private String commandExecutor(String[] command)
     {
         try {
@@ -171,6 +191,12 @@ public class GitDescribeMojo
         } catch (Exception e) { return null; }
     }
 
+    /**
+     * Parse the default output of git describe to fetch a commit number.
+     *
+     * @param describer     output of git describe command
+     * @return              version number as string
+     */
     private String getCommitCount( String describer )
     {
         Pattern pattern = Pattern.compile("-(\\d+)-g[0-9a-f]{7}$");
@@ -183,26 +209,41 @@ public class GitDescribeMojo
         return count;
     }
 
+    /**
+     * Getter for descriptionProperty.
+     */
     protected String getDescribeProperty()
     {
         return getProperty( descriptionProperty );
     }
 
+    /**
+     * Generic property fetcher.
+     */
     protected String getProperty( String property )
     {
         return project.getProperties().getProperty( property );
     }
 
+    /**
+     * Setter for descriptionProperty.
+     */
     private void setDescribeProperty( String describer )
     {
         setProperty( descriptionProperty, describer );
     }
 
+    /**
+     * Setter for commitCountProperty.
+     */
     private void setCommitCountProperty( String count )
     {
         setProperty( commitCountProperty, count );
     }
 
+    /**
+     * Generic property setter.
+     */
     private void setProperty( String property, String value )
     {
         if ( value != null )
@@ -211,6 +252,12 @@ public class GitDescribeMojo
         }
     }
 
+    /**
+     * Takes some Strings and returns the first, non-null String.
+     *
+     * @param strings   the Strings which we should go through
+     * @return          the first non-null String passed.
+     */
     private static String firstNonNull(String... strings) {
         for (String string : strings) {
             if (string != null) {
