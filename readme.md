@@ -41,6 +41,9 @@ The following configuration properties are available:
     failOutput (Default: unknown)
       String indicating full output if getting version fails
 
+    tags (Default: false)
+      If true, pass the `--tags` flag to git-describe.
+
     outputPrefix (Default: git-)
       String to prepend to git describe/shorttag output
 

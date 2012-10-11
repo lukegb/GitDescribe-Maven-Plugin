@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -115,6 +117,13 @@ public class GitDescribeMojo
     private String dirtyMark;
 
     /**
+     * If true, pass the `--tags` flag to git-describe.
+     *
+     * @parameter default-value=false
+     */
+    private boolean tags;
+
+    /**
      * Perform the task for which this plugin exists.
      * i.e. try to shove the Git Describe property into Maven
      */
@@ -167,9 +176,19 @@ public class GitDescribeMojo
      */
     private String[] buildDescribeCommand()
     {
-        return dirty
-           ? new String[] {"git", "describe", "--dirty=" + dirtyMark}
-           : new String[] {"git", "describe"};
+        List<String> args = new ArrayList<String>();
+        args.add("git");
+        args.add("describe");
+
+        if (dirty) {
+            args.add("--dirty=" + dirtyMark);
+        }
+
+        if (tags) {
+            args.add("--tags");
+        }
+
+        return args.toArray(new String[args.size()]);
     }
 
     /**
