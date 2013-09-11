@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -115,6 +117,28 @@ public class GitDescribeMojo
     private String dirtyMark;
 
     /**
+     * If true, pass the `--long` flag to git-describe.
+     *
+     * @parameter alias="long" default-value="false"
+     */
+    private boolean longFlag;
+
+    /**
+     * If true, set the properties on reactor projects.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean setReactorProjectsProperties;
+
+    /**
+     * The projects in the reactor.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @readonly
+     */
+    private List reactorProjects;
+
+    /**
      * Perform the task for which this plugin exists.
      * i.e. try to shove the Git Describe property into Maven
      */
@@ -167,9 +191,19 @@ public class GitDescribeMojo
      */
     private String[] buildDescribeCommand()
     {
-        return dirty
-           ? new String[] {"git", "describe", "--dirty=" + dirtyMark}
-           : new String[] {"git", "describe"};
+        ArrayList command = new ArrayList();
+        command.add("git");
+        command.add("describe");
+
+        if (dirty) {
+            command.add("--dirty=" + dirtyMark);
+        }
+
+        if (longFlag) {
+            command.add("--long");
+        }
+
+        return (String[]) command.toArray(new String[command.size()]);
     }
 
     /**
@@ -249,6 +283,14 @@ public class GitDescribeMojo
         if ( value != null )
         {
             project.getProperties().put( property, value );
+            if ( setReactorProjectsProperties && reactorProjects != null )
+            {
+                for (Object reactorProject : reactorProjects )
+                {
+                    MavenProject nextProj = (MavenProject) reactorProject;
+                    nextProj.getProperties().put(property, value);
+                }
+            }
         }
     }
 
