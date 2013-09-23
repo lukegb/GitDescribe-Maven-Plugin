@@ -119,9 +119,31 @@ public class GitDescribeMojo
     /**
      * If true, pass the `--tags` flag to git-describe.
      *
-     * @parameter default-value=false
+     * @parameter alias="tags" default-value=false
      */
-    private boolean tags;
+    private boolean tagsFlag;
+
+    /**
+     * If true, pass the `--long` flag to git-describe.
+     *
+     * @parameter alias="long" default-value=false
+     */
+    private boolean longFlag;
+
+    /**
+     * If true, set the properties on reactor projects.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean setReactorProjectsProperties;
+
+    /**
+     * The projects in the reactor.
+     *
+     * @parameter expression="${reactorProjects}"
+     * @readonly
+     */
+    private List reactorProjects;
 
     /**
      * Perform the task for which this plugin exists.
@@ -184,8 +206,12 @@ public class GitDescribeMojo
             args.add("--dirty=" + dirtyMark);
         }
 
-        if (tags) {
+        if (tagsFlag) {
             args.add("--tags");
+        }
+
+        if (longFlag) {
+            command.add("--long");
         }
 
         return args.toArray(new String[args.size()]);
@@ -268,6 +294,14 @@ public class GitDescribeMojo
         if ( value != null )
         {
             project.getProperties().put( property, value );
+            if ( setReactorProjectsProperties && reactorProjects != null )
+            {
+                for (Object reactorProject : reactorProjects )
+                {
+                    MavenProject nextProj = (MavenProject) reactorProject;
+                    nextProj.getProperties().put(property, value);
+                }
+            }
         }
     }
 

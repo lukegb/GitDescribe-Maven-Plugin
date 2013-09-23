@@ -50,5 +50,11 @@ The following configuration properties are available:
     outputSuffix
       String to append to git describe/shorttag output.
 
+    long (Default: false)
+      If true, pass the `--long` flag to git-describe.
+
+    setReactorProjectsProperties (Default: false)
+      If true, set the properties on reactor projects.
+
 
 
