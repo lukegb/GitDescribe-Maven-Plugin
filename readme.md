@@ -32,29 +32,29 @@ The following configuration properties are available:
       The name of the build property that will contain the output of git
       describe.
 
-    dirty (Default: false)
-      If true, pass the `--dirty` flag to git-describe.
-
-    dirtyMark (Default: dirty)
-      The <mark> value for the `--dirty` parameter.
-
     failOutput (Default: unknown)
       String indicating full output if getting version fails
 
-    tags (Default: false)
-      If true, pass the `--tags` flag to git-describe.
-
     outputPrefix (Default: git-)
-      String to prepend to git describe/shorttag output
+      String to prepend to git describe/shorttag output.
 
     outputSuffix
       String to append to git describe/shorttag output.
 
-    long (Default: false)
-      If true, pass the `--long` flag to git-describe.
-
     setReactorProjectsProperties (Default: false)
       If true, set the properties on reactor projects.
 
+    extraArguments
+      Array of flags to pass to git, wrapped inside `<param>` elements.
 
+### Configuration Example
 
+The plugin might be configured in your pom like so:
+
+  <configuration>
+    <extraArguments>
+      <param>--dirty</param>
+      <param>--tags</param>
+    </extraArguments>
+    <setReactorProjectsProperties>true</setReactorProjectsProperties>
+  </configuration>

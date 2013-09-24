@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -103,32 +104,11 @@ public class GitDescribeMojo
     private String commitCountProperty;
 
     /**
-     * If true, pass the `--dirty` flag to git-describe.
+     * Extra command-line arguments to git describe.
      *
-     * @parameter default-value=false
+     * @parameter default-value=""
      */
-    private boolean dirty;
-
-    /**
-     * The &lt;mark&gt; value for the `--dirty` parameter.
-     *
-     * @parameter default-value="dirty"
-     */
-    private String dirtyMark;
-
-    /**
-     * If true, pass the `--tags` flag to git-describe.
-     *
-     * @parameter alias="tags" default-value=false
-     */
-    private boolean tagsFlag;
-
-    /**
-     * If true, pass the `--long` flag to git-describe.
-     *
-     * @parameter alias="long" default-value=false
-     */
-    private boolean longFlag;
+    private String[] extraArguments;
 
     /**
      * If true, set the properties on reactor projects.
@@ -199,20 +179,13 @@ public class GitDescribeMojo
     private String[] buildDescribeCommand()
     {
         List<String> args = new ArrayList<String>();
+
         args.add("git");
         args.add("describe");
 
-        if (dirty) {
-            args.add("--dirty=" + dirtyMark);
-        }
+        args.addAll(Arrays.asList(this.extraArguments));
 
-        if (tagsFlag) {
-            args.add("--tags");
-        }
-
-        if (longFlag) {
-            command.add("--long");
-        }
+        getLog().info(args.toString());
 
         return args.toArray(new String[args.size()]);
     }
