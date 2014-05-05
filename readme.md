@@ -6,6 +6,7 @@ This plugin invokes `git describe` and captures the output in a build variable.
 
 The plugin might be configured in your pom like so:
 
+```xml
       <plugin>
         <groupId>com.lukegb.mojo</groupId>
         <artifactId>gitdescribe-maven-plugin</artifactId>
@@ -23,6 +24,7 @@ The plugin might be configured in your pom like so:
           </execution>
         </executions>
       </plugin>
+```
 
 ## Configuration properties
 
@@ -51,6 +53,7 @@ The following configuration properties are available:
 
 The plugin might be configured in your pom like so:
 
+```xml
   <configuration>
     <extraArguments>
       <param>--dirty</param>
@@ -58,3 +61,4 @@ The plugin might be configured in your pom like so:
     </extraArguments>
     <setReactorProjectsProperties>true</setReactorProjectsProperties>
   </configuration>
+```
