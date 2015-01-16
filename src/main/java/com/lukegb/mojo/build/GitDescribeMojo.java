@@ -183,7 +183,9 @@ public class GitDescribeMojo
         args.add("git");
         args.add("describe");
 
-        args.addAll(Arrays.asList(this.extraArguments));
+        if (extraArguments != null) {
+            args.addAll(Arrays.asList(extraArguments));
+        }
 
         getLog().info(args.toString());
 
