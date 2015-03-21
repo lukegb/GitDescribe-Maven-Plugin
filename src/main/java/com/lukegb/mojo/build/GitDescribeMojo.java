@@ -178,8 +178,6 @@ public class GitDescribeMojo
             args.addAll(Arrays.asList(extraArguments));
         }
 
-        getLog().info(args.toString());
-
         return args.toArray(new String[args.size()]);
     }
 
