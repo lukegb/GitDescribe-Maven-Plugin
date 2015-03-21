@@ -60,15 +60,6 @@ public class GitDescribeMojo
     private File scmDirectory;
 
     /**
-     * String to append to git describe/shorttag output
-     *
-     * @parameter default-value=""
-     * @deprecated superseded by outputSuffix.
-     */
-    @Deprecated
-    private String outputPostfix;
-
-    /**
      * String to append to git describe/shorttag output.
      *
      * @parameter default-value=""
@@ -158,7 +149,7 @@ public class GitDescribeMojo
         throws ScmException, MojoExecutionException
     {
         outputPrefix = firstNonNull(outputPrefix, "");
-        outputSuffix = firstNonNull(outputSuffix, outputPostfix, "");
+        outputSuffix = firstNonNull(outputSuffix, "");
         // scmDirectory
         String line = commandExecutor(buildDescribeCommand());
         if (line == null) {
