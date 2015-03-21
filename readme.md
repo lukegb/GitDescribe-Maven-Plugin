@@ -37,7 +37,7 @@ The following configuration properties are available:
     failOutput (Default: unknown)
       String indicating full output if getting version fails
 
-    outputPrefix (Default: git-)
+    outputPrefix
       String to prepend to git describe/shorttag output.
 
     outputSuffix
