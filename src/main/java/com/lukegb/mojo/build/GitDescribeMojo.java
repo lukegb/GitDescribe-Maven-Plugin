@@ -46,7 +46,7 @@ public class GitDescribeMojo
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @readonly
      */
     private MavenProject project;
@@ -54,7 +54,7 @@ public class GitDescribeMojo
     /**
      * Local directory to be used to issue SCM actions
      *
-     * @parameter expression="${maven.changeSet.scmDirectory}" default-value="${basedir}
+     * @parameter property="maven.changeSet.scmDirectory" default-value="${basedir}"
      * @since 1.0
      */
     private File scmDirectory;
@@ -120,7 +120,7 @@ public class GitDescribeMojo
     /**
      * The projects in the reactor.
      *
-     * @parameter expression="${reactorProjects}"
+     * @parameter property="reactorProjects"
      * @readonly
      */
     private List reactorProjects;
